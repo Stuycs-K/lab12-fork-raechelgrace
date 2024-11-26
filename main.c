@@ -7,35 +7,47 @@
 #include <errno.h>
 
 int printErr(){
-  perror("Error %d: %s\n", errno, strerror(errno));
+  printf("Error %d: %s\n", errno, strerror(errno));
   return -1;
 }
 
+int randNum(){
+  srand(getpid());
+  int randNum = rand()%5+1; // print random number in the range [1,5]
+  return randNum;
+}
 
-// /dev/random for random
-//
-// You can read bytes from /dev/random to return random bytes from the 'entropy pool'.
-// When the entropy pool is empty (you read too many values), reads from /dev/random will block until additional environmental noise is gathered.
-// /dev/random is be suitable for uses that need very high quality randomness such as one-time pad or key generation.
-//
-//
 
-printf("%d about to create 2 child processes.\n", getpid());
+int main(){
+  
+  printf("%d about to create 2 child processes.\n", getpid());
 
-pid_t p;
-p = fork();
+  pid_t p1 = fork();
 
-// fork twice? p1 and p2?
+  int randOne = randNum();
+  if(p1<0){
+    perror("fork fail");
+    exit(1);
+  } else if (p1 == 0){ // child
+      printf("%d      %d secs\n", getpid(), randOne);
+      sleep(randOne);
+      printf("%d finished after %d seconds.\n", getpid(), randOne);
+      exit(randOne);
+  }
 
-if(p<0){
-  perror("fork fail");//output to stderr instead of stdout
-  exit(1);
-} else if ( p == 0){ // child
-    printf("%d\n", getpid());
-    int rand = 1; // print random number in the range [1,5]
-    sleep(rand);
-    printf("%d finished after %d seconds.\n", getpid(), rand);
-}else{ // parent
-  wait(WIFSIGNALED); // is this the right wait signal?
-  printf("Main Process %d is done. Child %d slept for %d sec", getpid(), p, rand);
+  pid_t p2 = fork();
+
+  int randTwo = randNum();
+  if(p2<0){
+    perror("fork fail");
+    exit(1);
+  } else if (p2 == 0){ // child
+      printf("%d      %d secs\n", getpid(), randTwo);
+      sleep(randTwo);
+      printf("%d finished after %d seconds.\n", getpid(), randTwo);
+      exit(randTwo);
+  }
+
+  if(WIFEXITED); // works if null but not with the WIFEXITED... what's up with that
+  printf("Main Process %d is done. Child %d slept for %d sec\n", getpid(), p1, randOne);
 }
