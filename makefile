@@ -5,5 +5,5 @@ main.o: main.c
 run: main
 	@./main
 clean:
-	rm -f *.o
-	rm -f main
+	@rm -f *.o
+	@rm -f main
