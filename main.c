@@ -58,5 +58,5 @@ int main(){
   if(WIFEXITED(status) && done!=-1){
     printf("Main Process %d is done. Child %d slept for %d sec\n", getpid(), done, WEXITSTATUS(status));
   }
-  if(done == 0) printErr();
+  if(done == -1) printErr();
 }
